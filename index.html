@@ -1,0 +1,602 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>For Siddhi – From Jaiesh</title>
+
+  <!-- High quality fonts -->
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&family=Cormorant+Garamond:ital,wght@0,400;0,600;1,400&family=Great+Vibes&family=Poppins:wght@300;400;500;600&family=Dancing+Script:wght@500;600&display=swap" rel="stylesheet">
+
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      min-height: 100vh;
+      background: linear-gradient(135deg, #fff5f7 0%, #ffe4ec 35%, #ffd6e7 70%, #ffc2d4 100%);
+      font-family: 'Poppins', sans-serif;
+      overflow-x: hidden;
+      position: relative;
+      color: #4a2c2a;
+    }
+
+    /* ========== FLOATING HEARTS ========== */
+    .heart {
+      position: fixed;
+      font-size: 22px;
+      color: rgba(255, 105, 180, 0.45);
+      pointer-events: auto;
+      cursor: pointer;
+      user-select: none;
+      z-index: 5;
+      transition: transform 0.3s ease, opacity 0.3s ease;
+      animation: floatUp linear infinite;
+    }
+
+    .heart:hover {
+      transform: scale(1.3);
+      color: #ff1493;
+    }
+
+    .heart.explode {
+      animation: explode 0.6s forwards;
+    }
+
+    @keyframes floatUp {
+      0% { transform: translateY(0) rotate(0deg); opacity: 0.7; }
+      100% { transform: translateY(-110vh) rotate(360deg); opacity: 0; }
+    }
+
+    @keyframes explode {
+      0% { transform: scale(1); opacity: 1; }
+      50% { transform: scale(1.8); opacity: 0.8; }
+      100% { transform: scale(0); opacity: 0; }
+    }
+
+    /* ========== UNLOCK SCREEN ========== */
+    #unlock-screen {
+      position: fixed;
+      inset: 0;
+      background: linear-gradient(135deg, #fff0f5, #ffd1dc, #ffb6c1);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      z-index: 1000;
+      transition: opacity 0.7s ease, visibility 0.7s;
+    }
+
+    #unlock-screen.hidden {
+      opacity: 0;
+      visibility: hidden;
+      pointer-events: none;
+    }
+
+    .unlock-box {
+      background: rgba(255, 255, 255, 0.92);
+      backdrop-filter: blur(16px);
+      padding: 50px 45px;
+      border-radius: 32px;
+      text-align: center;
+      box-shadow: 0 30px 60px rgba(255, 105, 180, 0.25);
+      border: 1px solid rgba(255, 182, 193, 0.6);
+      max-width: 440px;
+      width: 92%;
+    }
+
+    .unlock-title {
+      font-family: 'Great Vibes', cursive;
+      font-size: 3.2rem;
+      color: #d63384;
+      margin-bottom: 6px;
+    }
+
+    .unlock-sub {
+      color: #c71585;
+      font-size: 1rem;
+      margin-bottom: 30px;
+      opacity: 0.9;
+    }
+
+    #password-input {
+      width: 100%;
+      padding: 15px 22px;
+      border: 2px solid #ffb6c1;
+      border-radius: 50px;
+      font-size: 1.1rem;
+      text-align: center;
+      outline: none;
+      font-family: 'Poppins', sans-serif;
+      transition: border-color 0.3s, box-shadow 0.3s;
+    }
+
+    #password-input:focus {
+      border-color: #d63384;
+      box-shadow: 0 0 0 4px rgba(214, 51, 132, 0.15);
+    }
+
+    #unlock-btn {
+      margin-top: 22px;
+      width: 100%;
+      padding: 15px;
+      background: linear-gradient(135deg, #ff69b4, #d63384);
+      color: white;
+      border: none;
+      border-radius: 50px;
+      font-size: 1.1rem;
+      font-weight: 500;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      box-shadow: 0 10px 25px rgba(214, 51, 132, 0.35);
+    }
+
+    #unlock-btn:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 14px 30px rgba(214, 51, 132, 0.45);
+    }
+
+    .error-msg {
+      color: #e11d48;
+      font-size: 0.95rem;
+      margin-top: 16px;
+      height: 22px;
+      opacity: 0;
+      transition: opacity 0.3s;
+    }
+
+    .error-msg.show {
+      opacity: 1;
+    }
+
+    /* ========== MAIN CONTENT ========== */
+    #main-content {
+      display: none;
+      min-height: 100vh;
+      padding: 40px 20px 80px;
+      position: relative;
+      z-index: 10;
+    }
+
+    #main-content.visible {
+      display: block;
+    }
+
+    .top-banner {
+      text-align: center;
+      margin-bottom: 25px;
+    }
+
+    .from-text {
+      font-family: 'Dancing Script', cursive;
+      font-size: 1.9rem;
+      color: #c71585;
+      letter-spacing: 1px;
+    }
+
+    .siddhi-name {
+      font-family: 'Great Vibes', cursive;
+      font-size: 3.8rem;
+      color: #d63384;
+      margin: 10px 0 5px;
+      position: relative;
+      display: inline-block;
+    }
+
+    .siddhi-name::before,
+    .siddhi-name::after {
+      content: "♥";
+      position: absolute;
+      top: 50%;
+      transform: translateY(-50%);
+      font-size: 1.6rem;
+      color: #ff69b4;
+      animation: pulseHeart 1.8s infinite;
+    }
+
+    .siddhi-name::before { left: -40px; }
+    .siddhi-name::after  { right: -40px; }
+
+    @keyframes pulseHeart {
+      0%, 100% { transform: translateY(-50%) scale(1); }
+      50% { transform: translateY(-50%) scale(1.25); }
+    }
+
+    .poem-title {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.7rem;
+      font-weight: 600;
+      color: #9d174d;
+      margin: 15px 0 30px;
+      letter-spacing: 0.5px;
+    }
+
+    /* Poem container */
+    .poem-container {
+      max-width: 720px;
+      margin: 0 auto;
+      background: rgba(255, 255, 255, 0.88);
+      backdrop-filter: blur(14px);
+      border-radius: 28px;
+      padding: 45px 40px;
+      box-shadow: 0 25px 50px rgba(255, 105, 180, 0.2);
+      border: 1px solid rgba(255, 182, 193, 0.5);
+      min-height: 340px;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      position: relative;
+    }
+
+    .paragraph {
+      font-family: 'Cormorant Garamond', 'Playfair Display', serif;
+      font-size: 1.45rem;
+      line-height: 1.85;
+      color: #3f1f1f;
+      text-align: center;
+      opacity: 0;
+      transform: translateY(18px);
+      transition: opacity 0.55s ease, transform 0.55s ease;
+      white-space: pre-line;
+    }
+
+    .paragraph.visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    .progress-dots {
+      display: flex;
+      justify-content: center;
+      gap: 9px;
+      margin: 28px 0 10px;
+    }
+
+    .dot {
+      width: 9px;
+      height: 9px;
+      border-radius: 50%;
+      background: #ffb6c1;
+      transition: all 0.3s ease;
+    }
+
+    .dot.active {
+      background: #d63384;
+      transform: scale(1.4);
+    }
+
+    /* Buttons */
+    .controls {
+      display: flex;
+      justify-content: center;
+      gap: 16px;
+      margin-top: 25px;
+      flex-wrap: wrap;
+    }
+
+    .btn {
+      font-family: 'Poppins', sans-serif;
+      font-size: 1rem;
+      font-weight: 500;
+      padding: 13px 28px;
+      border-radius: 50px;
+      border: none;
+      cursor: pointer;
+      transition: all 0.25s ease;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .btn-next {
+      background: linear-gradient(135deg, #ff69b4, #d63384);
+      color: white;
+      box-shadow: 0 8px 22px rgba(214, 51, 132, 0.35);
+    }
+
+    .btn-next:hover:not(:disabled) {
+      transform: translateY(-3px);
+      box-shadow: 0 12px 28px rgba(214, 51, 132, 0.45);
+    }
+
+    .btn-back {
+      background: white;
+      color: #d63384;
+      border: 2px solid #ffb6c1;
+    }
+
+    .btn-back:hover:not(:disabled) {
+      background: #fff0f5;
+      transform: translateY(-2px);
+    }
+
+    .btn:disabled {
+      opacity: 0.45;
+      cursor: not-allowed;
+      transform: none !important;
+      box-shadow: none !important;
+    }
+
+    /* Side button */
+    .side-btn {
+      position: fixed;
+      left: 20px;
+      top: 50%;
+      transform: translateY(-50%);
+      background: rgba(255, 255, 255, 0.9);
+      border: 2px solid #ffb6c1;
+      color: #d63384;
+      padding: 12px 18px;
+      border-radius: 50px;
+      font-size: 0.9rem;
+      font-weight: 500;
+      cursor: pointer;
+      z-index: 50;
+      box-shadow: 0 8px 20px rgba(255, 105, 180, 0.2);
+      transition: all 0.25s ease;
+      writing-mode: vertical-rl;
+      text-orientation: mixed;
+    }
+
+    .side-btn:hover {
+      background: #fff0f5;
+      transform: translateY(-50%) scale(1.05);
+    }
+
+    .dedication {
+      text-align: center;
+      margin-top: 40px;
+      font-family: 'Playfair Display', serif;
+      font-size: 1.15rem;
+      color: #9d174d;
+      font-style: italic;
+    }
+
+    .author {
+      margin-top: 8px;
+      font-family: 'Dancing Script', cursive;
+      font-size: 1.4rem;
+      color: #d63384;
+    }
+
+    /* Responsive */
+    @media (max-width: 700px) {
+      .siddhi-name { font-size: 2.8rem; }
+      .siddhi-name::before { left: -32px; }
+      .siddhi-name::after  { right: -32px; }
+      .poem-container { padding: 35px 24px; }
+      .paragraph { font-size: 1.25rem; }
+      .side-btn {
+        writing-mode: horizontal-tb;
+        top: auto;
+        bottom: 25px;
+        left: 50%;
+        transform: translateX(-50%);
+      }
+      .side-btn:hover {
+        transform: translateX(-50%) scale(1.05);
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Unlock Screen -->
+  <div id="unlock-screen">
+    <div class="unlock-box">
+      <h1 class="unlock-title">For You</h1>
+      <p class="unlock-sub">Enter the secret name ❤️</p>
+      <input type="text" id="password-input" placeholder="Type here..." autocomplete="off" spellcheck="false"/>
+      <button id="unlock-btn">Unlock with Love</button>
+      <p class="error-msg" id="error-msg">That’s not the right name...</p>
+    </div>
+  </div>
+
+  <!-- Main Content -->
+  <div id="main-content">
+    <button class="side-btn" onclick="goBackToPassword()">← Back to Password</button>
+
+    <div class="top-banner">
+      <div class="from-text">From Your Love Jaiesh</div>
+      <div class="siddhi-name">Siddhi</div>
+      <div class="poem-title">The First Kiss — The Experience of A Lifetime</div>
+    </div>
+
+    <div class="poem-container">
+      <div class="paragraph" id="paragraph"></div>
+
+      <div class="progress-dots" id="dots"></div>
+
+      <div class="controls">
+        <button class="btn btn-back" id="btnBack" onclick="goPrev()">← Go Back</button>
+        <button class="btn btn-next" id="btnNext" onclick="goNext()">Go to Next →</button>
+      </div>
+    </div>
+
+    <div class="dedication">
+      Dedicated to: Siddhi My Love 💕
+      <div class="author">— Jaiesh Sahadeo</div>
+    </div>
+  </div>
+
+  <script>
+    // ========== PASSWORD ==========
+    const CORRECT_PASSWORD = "SiddhiIsBaeee";
+
+    // ========== POEM PARAGRAPHS ==========
+    const paragraphs = [
+`The world grew quiet for a moment,
+As if the stars had paused to witness,
+A divine act, a single kiss, so soft, so gentle,
+Become a memory I can never forget.`,
+
+`It wasn't simply just a moment,
+It felt like something out of this world,
+A little piece of magic happened
+The instant I was close to you.`,
+
+`Your presence made the moment feel so special,
+Your smile made everything feel right,
+And somehow, in that little second,
+You made the whole world feel so light.`,
+
+`That first kiss became a treasure,
+A memory I'll forever hold,
+Because with you, the simplest moments
+Can feel more precious than gold.`,
+
+`And now I'm deeply attached to you,
+More than these simple words can say,
+For you have found a special place
+In my heart that won't fade away.`,
+
+`If I could return to that moment,
+I'd choose it just the same again and again
+Because that magical kiss with you
+Was where a new chapter began.`,
+
+`As I close my eyes to sleep
+The first thing I see is that moment
+My heart grows softer and softer for you
+As I sleep carelessly with the thought of you.`,
+
+`Words cannot define this type of feelings
+When your eyes are looking into mine,
+Felt as though the earth had stopped rotating
+My heart melts at looking into your eyes.`,
+
+`I can sit all day and write
+But all the pages and pens
+In the world might not be enough,
+It truly is more than just a kiss.`
+    ];
+
+    // ========== ELEMENTS ==========
+    const unlockScreen = document.getElementById('unlock-screen');
+    const passwordInput = document.getElementById('password-input');
+    const unlockBtn = document.getElementById('unlock-btn');
+    const errorMsg = document.getElementById('error-msg');
+    const mainContent = document.getElementById('main-content');
+    const paragraphEl = document.getElementById('paragraph');
+    const dotsContainer = document.getElementById('dots');
+    const btnBack = document.getElementById('btnBack');
+    const btnNext = document.getElementById('btnNext');
+
+    let current = 0;
+
+    // Create dots
+    paragraphs.forEach((_, i) => {
+      const dot = document.createElement('div');
+      dot.className = 'dot' + (i === 0 ? ' active' : '');
+      dotsContainer.appendChild(dot);
+    });
+
+    // ========== UNLOCK ==========
+    function tryUnlock() {
+      const entered = passwordInput.value.trim().toLowerCase();
+      if (entered === CORRECT_PASSWORD.toLowerCase()) {
+        unlockScreen.classList.add('hidden');
+        setTimeout(() => {
+          mainContent.classList.add('visible');
+          updateParagraph();
+          startHearts();
+        }, 500);
+      } else {
+        errorMsg.classList.add('show');
+        passwordInput.value = '';
+        passwordInput.focus();
+        setTimeout(() => errorMsg.classList.remove('show'), 2200);
+      }
+    }
+
+    unlockBtn.addEventListener('click', tryUnlock);
+    passwordInput.addEventListener('keydown', e => {
+      if (e.key === 'Enter') tryUnlock();
+    });
+
+    // ========== NAVIGATION ==========
+    function updateParagraph() {
+      paragraphEl.classList.remove('visible');
+      setTimeout(() => {
+        paragraphEl.textContent = paragraphs[current];
+        paragraphEl.classList.add('visible');
+
+        document.querySelectorAll('.dot').forEach((d, i) => {
+          d.classList.toggle('active', i === current);
+        });
+
+        btnBack.disabled = current === 0;
+        btnNext.disabled = current === paragraphs.length - 1;
+      }, 280);
+    }
+
+    function goNext() {
+      if (current < paragraphs.length - 1) {
+        current++;
+        updateParagraph();
+      }
+    }
+
+    function goPrev() {
+      if (current > 0) {
+        current--;
+        updateParagraph();
+      }
+    }
+
+    function goBackToPassword() {
+      mainContent.classList.remove('visible');
+      unlockScreen.classList.remove('hidden');
+      passwordInput.value = '';
+      passwordInput.focus();
+      current = 0;
+    }
+
+    // Keyboard
+    document.addEventListener('keydown', e => {
+      if (!mainContent.classList.contains('visible')) return;
+      if (e.key === 'ArrowRight' || e.key === ' ') goNext();
+      if (e.key === 'ArrowLeft') goPrev();
+    });
+
+    // ========== INTERACTIVE HEARTS ==========
+    function createHeart() {
+      const heart = document.createElement('div');
+      heart.className = 'heart';
+      heart.textContent = ['♥','💖','💕','💗','💘','💞'][Math.floor(Math.random() * 6)];
+      heart.style.left = Math.random() * 100 + 'vw';
+      heart.style.bottom = '-40px';
+      heart.style.fontSize = (16 + Math.random() * 22) + 'px';
+      heart.style.animationDuration = (7 + Math.random() * 9) + 's';
+      heart.style.animationDelay = Math.random() * 2 + 's';
+      heart.style.color = `hsla(${330 + Math.random()*30}, 80%, 65%, 0.55)`;
+
+      heart.addEventListener('click', () => {
+        heart.classList.add('explode');
+        setTimeout(() => heart.remove(), 600);
+      });
+
+      document.body.appendChild(heart);
+
+      // Remove after animation ends
+      setTimeout(() => {
+        if (heart.parentNode) heart.remove();
+      }, 16000);
+    }
+
+    function startHearts() {
+      // Initial hearts
+      for (let i = 0; i < 12; i++) {
+        setTimeout(createHeart, i * 400);
+      }
+      // Keep spawning
+      setInterval(createHeart, 1800);
+    }
+
+    // Focus input on load
+    passwordInput.focus();
+  </script>
+</body>
+</html>
